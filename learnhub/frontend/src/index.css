@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-inter antialiased transition-colors duration-500 min-h-screen text-gray-900 dark:text-gray-100;
+    /* Soft animated gradient background for Light Mode */
+    background: linear-gradient(-45deg, #f3f4f6, #ffffff, #e0e7ff, #f3f4f6);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+  }
+  
+  .dark body {
+    /* Deep rich animated gradient for Dark Mode */
+    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #09090b, #111827);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+  }
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
+  }
+  
+  .glass-card {
+    @apply bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-white/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+}
