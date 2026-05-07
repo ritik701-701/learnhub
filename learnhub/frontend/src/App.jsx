@@ -44,20 +44,20 @@ function App() {
               <PrivateRoute><StudentAssignments /></PrivateRoute>
             } />
             
-            <Route path="/instructor" element={
-              <PrivateRoute role="instructor"><InstructorDashboard /></PrivateRoute>
+            <Route path="/admin" element={
+              <PrivateRoute role="admin"><InstructorDashboard /></PrivateRoute>
             } />
-            <Route path="/instructor/create-course" element={
-              <PrivateRoute role="instructor"><CreateCourse /></PrivateRoute>
+            <Route path="/admin/create-course" element={
+              <PrivateRoute role="admin"><CreateCourse /></PrivateRoute>
             } />
-            <Route path="/instructor/edit-course/:id" element={
-              <PrivateRoute role="instructor"><EditCourse /></PrivateRoute>
+            <Route path="/admin/edit-course/:id" element={
+              <PrivateRoute role="admin"><EditCourse /></PrivateRoute>
             } />
-            <Route path="/instructor/course/:id/quiz" element={
-              <PrivateRoute role="instructor"><InstructorQuiz /></PrivateRoute>
+            <Route path="/admin/course/:id/quiz" element={
+              <PrivateRoute role="admin"><InstructorQuiz /></PrivateRoute>
             } />
-            <Route path="/instructor/course/:id/assignments" element={
-              <PrivateRoute role="instructor"><InstructorAssignments /></PrivateRoute>
+            <Route path="/admin/course/:id/assignments" element={
+              <PrivateRoute role="admin"><InstructorAssignments /></PrivateRoute>
             } />
             
             <Route path="/notifications" element={

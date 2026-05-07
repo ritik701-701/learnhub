@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Comment = require('../models/Comment');
 const Notification = require('../models/Notification');
-const { protect, instructorOnly } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 
 router.get('/:lessonId', protect, async (req, res) => {
   try {
@@ -22,7 +22,7 @@ router.post('/', protect, async (req, res) => {
   }
 });
 
-router.post('/:id/reply', protect, instructorOnly, async (req, res) => {
+router.post('/:id/reply', protect, adminOnly, async (req, res) => {
   try {
     const comment = await Comment.findById(req.params.id);
     if (!comment) return res.status(404).json({ msg: 'Comment not found' });
@@ -32,7 +32,7 @@ router.post('/:id/reply', protect, instructorOnly, async (req, res) => {
 
     await Notification.create({
       user: comment.user,
-      message: `An instructor replied to your doubt`
+      message: `An admin replied to your doubt`
     });
 
     res.json(comment);

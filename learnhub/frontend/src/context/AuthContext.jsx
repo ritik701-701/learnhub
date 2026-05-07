@@ -9,12 +9,30 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userInfo = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    if (userInfo && token) {
-      setUser(JSON.parse(userInfo));
-    }
-    setLoading(false);
+    const initAuth = async () => {
+      const token = localStorage.getItem('token');
+      const userInfo = localStorage.getItem('user');
+
+      if (token) {
+        try {
+          const { data } = await api.get('/auth/me');
+          setUser(data);
+          localStorage.setItem('user', JSON.stringify(data));
+        } catch (error) {
+          console.error('Failed to fetch user profile, falling back to local storage', error);
+          // If token is invalid or endpoint doesn't exist, use localStorage
+          if (userInfo) {
+            setUser(JSON.parse(userInfo));
+          }
+        }
+      } else if (userInfo) {
+        // Edge case: user info exists but no token (shouldn't happen, but just in case)
+        setUser(JSON.parse(userInfo));
+      }
+      setLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   const login = async (email, password) => {
@@ -33,9 +51,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (name, email, password, role) => {
+  const signup = async (name, email, password) => {
     try {
-      const { data } = await api.post('/auth/signup', { name, email, password, role });
+      const { data } = await api.post('/auth/signup', { name, email, password });
       localStorage.setItem('user', JSON.stringify(data));
       localStorage.setItem('token', data.token);
       setUser(data);

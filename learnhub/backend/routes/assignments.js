@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Assignment = require('../models/Assignment');
 const AssignmentSubmission = require('../models/AssignmentSubmission');
-const { protect, instructorOnly } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 
 // Create assignment
-router.post('/', protect, instructorOnly, async (req, res) => {
+router.post('/', protect, adminOnly, async (req, res) => {
   try {
     const assignment = await Assignment.create(req.body);
     res.status(201).json(assignment);
@@ -47,8 +47,8 @@ router.post('/submit', protect, async (req, res) => {
   }
 });
 
-// Get submissions for an assignment (instructor only)
-router.get('/:assignmentId/submissions', protect, instructorOnly, async (req, res) => {
+// Get submissions for an assignment (admin only)
+router.get('/:assignmentId/submissions', protect, adminOnly, async (req, res) => {
   try {
     const submissions = await AssignmentSubmission.find({ assignment: req.params.assignmentId }).populate('user', 'name');
     res.json(submissions);
@@ -57,8 +57,8 @@ router.get('/:assignmentId/submissions', protect, instructorOnly, async (req, re
   }
 });
 
-// Grade submission (instructor only)
-router.post('/grade/:submissionId', protect, instructorOnly, async (req, res) => {
+// Grade submission (admin only)
+router.post('/grade/:submissionId', protect, adminOnly, async (req, res) => {
   try {
     const { grade, feedback } = req.body;
     const submission = await AssignmentSubmission.findByIdAndUpdate(

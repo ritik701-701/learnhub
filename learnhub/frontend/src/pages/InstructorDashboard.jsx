@@ -11,7 +11,7 @@ const InstructorDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await api.get('/dashboard/instructor');
+        const { data } = await api.get('/dashboard/admin');
         setStats(data);
       } catch (error) {
         console.error(error);
@@ -33,8 +33,8 @@ const InstructorDashboard = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Instructor Dashboard</h1>
-        <Link to="/instructor/create-course" className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        <Link to="/admin/create-course" className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
           <PlusCircle className="w-5 h-5 mr-2" /> Create Course
         </Link>
       </div>
@@ -78,7 +78,7 @@ const InstructorDashboard = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{c.title}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{c.students}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">
-                      <Link to={`/instructor/edit-course/${c._id}`} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                      <Link to={`/admin/edit-course/${c._id}`} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
                         Edit
                       </Link>
                     </td>

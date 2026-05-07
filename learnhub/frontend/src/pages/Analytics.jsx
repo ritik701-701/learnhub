@@ -9,7 +9,7 @@ const Analytics = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await api.get('/dashboard/instructor');
+        const { data } = await api.get('/dashboard/admin');
         setStats(data);
       } catch (error) {
         console.error(error);

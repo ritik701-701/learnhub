@@ -51,7 +51,7 @@ const CreateCourse = () => {
     try {
       await api.post('/courses', formData);
       toast.success('Course created successfully!');
-      navigate('/instructor');
+      navigate('/admin');
     } catch (error) {
       toast.error('Failed to create course');
     }

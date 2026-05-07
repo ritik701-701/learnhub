@@ -111,7 +111,7 @@ const StudentAssignments = () => {
                       
                       {sub.feedback && (
                         <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-md border-l-4 border-blue-500">
-                          <h5 className="font-bold text-blue-900 dark:text-blue-200 mb-1">Instructor Feedback</h5>
+                          <h5 className="font-bold text-blue-900 dark:text-blue-200 mb-1">Admin Feedback</h5>
                           <p className="text-blue-800 dark:text-blue-300">{sub.feedback}</p>
                         </div>
                       )}

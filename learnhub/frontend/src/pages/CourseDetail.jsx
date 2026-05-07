@@ -95,7 +95,7 @@ const CourseDetail = () => {
   if (!course) return <div className="text-center p-10">Course not found</div>;
 
   const isEnrolled = user && course.students.includes(user._id);
-  const isInstructor = user && course.instructor._id === user._id;
+  const isAdmin = user && course.admin && course.admin._id === user._id;
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -110,7 +110,7 @@ const CourseDetail = () => {
             <span className="flex items-center"><Users className="w-5 h-5 mr-1" /> {course.students.length} students</span>
           </div>
           <div className="pt-4">
-            {isEnrolled || isInstructor ? (
+            {isEnrolled || isAdmin ? (
               <Link to={`/course/${id}/lesson`} className="inline-flex items-center px-6 py-3 bg-white text-indigo-600 rounded-lg font-bold hover:bg-gray-100 transition shadow-lg">
                 <PlayCircle className="w-5 h-5 mr-2" /> Go to Lessons
               </Link>
@@ -125,7 +125,7 @@ const CourseDetail = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          {(isEnrolled || isInstructor) && (
+          {(isEnrolled || isAdmin) && (
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
               <h2 className="text-2xl font-bold mb-4">Course Content</h2>
               {lessons.length === 0 ? (
@@ -151,7 +151,7 @@ const CourseDetail = () => {
             </div>
           )}
 
-          {isInstructor && (
+          {isAdmin && (
             <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-6 border border-indigo-100 dark:border-indigo-800 flex flex-col gap-6">
               <div>
                 <h2 className="text-xl font-bold mb-4 flex items-center text-indigo-800 dark:text-indigo-200">
@@ -219,7 +219,7 @@ const CourseDetail = () => {
                     <h3 className="font-bold text-lg text-indigo-900 dark:text-indigo-100">Course Assessment</h3>
                     <p className="text-sm text-indigo-700 dark:text-indigo-300">Create or edit the final quiz for students to earn their certificate.</p>
                   </div>
-                  <Link to={`/instructor/course/${id}/quiz`} className="px-6 py-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 font-bold rounded-lg border border-indigo-200 dark:border-indigo-700 shadow-sm hover:shadow-md transition whitespace-nowrap">
+                  <Link to={`/admin/course/${id}/quiz`} className="px-6 py-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 font-bold rounded-lg border border-indigo-200 dark:border-indigo-700 shadow-sm hover:shadow-md transition whitespace-nowrap">
                     Manage Final Quiz
                   </Link>
                 </div>
@@ -229,7 +229,7 @@ const CourseDetail = () => {
                     <h3 className="font-bold text-lg text-indigo-900 dark:text-indigo-100">Assignments & Grading</h3>
                     <p className="text-sm text-indigo-700 dark:text-indigo-300">Create assignments and grade student submissions.</p>
                   </div>
-                  <Link to={`/instructor/course/${id}/assignments`} className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-sm hover:shadow-md hover:bg-indigo-700 transition whitespace-nowrap">
+                  <Link to={`/admin/course/${id}/assignments`} className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-sm hover:shadow-md hover:bg-indigo-700 transition whitespace-nowrap">
                     Manage Assignments
                   </Link>
                 </div>
@@ -241,7 +241,7 @@ const CourseDetail = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Rate Course Section (For Enrolled Students Only) */}
-          {isEnrolled && !isInstructor && (
+          {isEnrolled && !isAdmin && (
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
               <h3 className="font-bold text-lg mb-2">Rate this Course</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">

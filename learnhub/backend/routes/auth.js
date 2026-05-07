@@ -19,11 +19,13 @@ router.post('/signup', [
   }
 
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ msg: 'User already exists' });
 
-    const user = await User.create({ name, email, password, role });
+    // Explicitly prevent role assignment during signup
+    // Admin roles must be assigned directly in the database
+    const user = await User.create({ name, email, password });
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -94,6 +96,16 @@ router.put('/profile', protect, async (req, res) => {
       bio: updatedUser.bio,
       token: generateToken(updatedUser._id) // optionally refresh token
     });
+  } catch (error) {
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+router.get('/me', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+    res.json(user);
   } catch (error) {
     res.status(500).json({ msg: 'Server error' });
   }

@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Quiz = require('../models/Quiz');
 const QuizAttempt = require('../models/QuizAttempt');
-const { protect, instructorOnly } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 
 // Create quiz (instructor only)
-router.post('/create', protect, instructorOnly, async (req, res) => {
+router.post('/create', protect, adminOnly, async (req, res) => {
   try {
     const { course, questions, passingPercent } = req.body;
     let quiz = await Quiz.findOne({ course });
