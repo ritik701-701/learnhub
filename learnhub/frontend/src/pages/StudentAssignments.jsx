@@ -83,9 +83,18 @@ const StudentAssignments = () => {
                     {a.dueDate && <p className="text-sm text-gray-500 mt-1">Due: {new Date(a.dueDate).toLocaleDateString()}</p>}
                   </div>
                   {sub?.grade ? (
-                    <span className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 font-bold rounded-full text-sm flex items-center">
-                      <CheckCircle className="w-4 h-4 mr-1" /> Graded: {sub.grade}
-                    </span>
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                      <span className={`px-3 py-1 font-bold rounded-full text-sm flex items-center ${
+                        ['A','B','C'].includes(sub.grade)
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                      }`}>
+                        <CheckCircle className="w-4 h-4 mr-1" /> Grade: {sub.grade}
+                      </span>
+                      <span className={`px-2 py-1 font-bold rounded-full text-xs text-white ${sub.passed ? 'bg-green-500' : 'bg-red-500'}`}>
+                        {sub.passed ? '✓ PASS' : '✗ FAIL'}
+                      </span>
+                    </div>
                   ) : sub ? (
                     <span className="px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 font-bold rounded-full text-sm flex items-center">
                       <Upload className="w-4 h-4 mr-1" /> Submitted

@@ -58,48 +58,64 @@ router.get('/:assignmentId/submissions', protect, adminOnly, async (req, res) =>
 });
 
 // Grade submission (admin only)
+// Passing grades: A, B, C → passed = true
+// Failing grades: D, F → passed = false
+const PASSING_GRADES = ['A', 'B', 'C'];
+
 router.post('/grade/:submissionId', protect, adminOnly, async (req, res) => {
   try {
     const { grade, feedback } = req.body;
+    
+    // Validate grade
+    const validGrades = ['A', 'B', 'C', 'D', 'F'];
+    const upperGrade = (grade || '').toUpperCase().trim();
+    if (!validGrades.includes(upperGrade)) {
+      return res.status(400).json({ msg: 'Invalid grade. Must be A, B, C, D, or F.' });
+    }
+
+    const passed = PASSING_GRADES.includes(upperGrade);
+
     const submission = await AssignmentSubmission.findByIdAndUpdate(
       req.params.submissionId,
-      { grade, feedback },
+      { grade: upperGrade, passed, feedback },
       { new: true }
     );
 
-    // Gamification Logic: Award points for getting graded
-    if (submission) {
+    if (!submission) return res.status(404).json({ msg: 'Submission not found' });
+
+    // Gamification: Award points only if passed and not already awarded
+    if (passed && !submission.pointsAwarded) {
       const User = require('../models/User');
       const Notification = require('../models/Notification');
       const student = await User.findById(submission.user);
-      if (student && !submission.pointsAwarded) {
-        const currentPoints = (student.points || 0) + 50;
+      if (student) {
         const newBadges = [];
-        
+        const currentPoints = (student.points || 0) + 50;
+
         // Check for Assignment Pro badge
         if (currentPoints >= 100 && !(student.badges || []).includes('Assignment Pro')) {
           newBadges.push('Assignment Pro');
         }
-        
+
         await User.findByIdAndUpdate(submission.user, {
           $inc: { points: 50 },
           $addToSet: { badges: { $each: newBadges } }
         });
-        
-        let msg = 'You earned 50 points for getting your assignment graded!';
+
+        let msg = `You got grade ${upperGrade} on your assignment and earned 50 points!`;
         if (newBadges.length > 0) {
           msg += ` You also unlocked the "${newBadges.join(', ')}" badge!`;
         }
         await Notification.create({ user: submission.user, message: msg });
-        
-        // Mark submission so points aren't awarded twice if graded again
-        submission.pointsAwarded = true;
-        await submission.save();
+
+        // Mark so points aren't awarded again
+        await AssignmentSubmission.findByIdAndUpdate(req.params.submissionId, { pointsAwarded: true });
       }
     }
 
     res.json(submission);
   } catch (error) {
+    console.error('Grade error:', error);
     res.status(500).json({ msg: 'Server error' });
   }
 });

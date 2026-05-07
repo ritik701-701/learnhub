@@ -53,7 +53,7 @@ const InstructorAssignments = () => {
   };
 
   const handleGrade = async (submissionId) => {
-    if (!gradeData.grade) return toast.error('Please enter a grade');
+    if (!gradeData.grade) return toast.error('Please select a grade');
     try {
       await api.post(`/assignments/grade/${submissionId}`, gradeData);
       toast.success('Graded successfully');
@@ -63,6 +63,19 @@ const InstructorAssignments = () => {
       toast.error('Failed to grade');
     }
   };
+
+  // Helper: grade color + pass/fail
+  const getGradeInfo = (grade) => {
+    const map = {
+      A: { color: 'text-green-700 bg-green-100 dark:bg-green-900/30 dark:text-green-400', label: 'PASS' },
+      B: { color: 'text-blue-700 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400', label: 'PASS' },
+      C: { color: 'text-indigo-700 bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400', label: 'PASS' },
+      D: { color: 'text-orange-700 bg-orange-100 dark:bg-orange-900/30 dark:text-orange-400', label: 'FAIL' },
+      F: { color: 'text-red-700 bg-red-100 dark:bg-red-900/30 dark:text-red-400', label: 'FAIL' },
+    };
+    return map[grade] || { color: 'text-gray-600 bg-gray-100', label: '' };
+  };
+
 
   if (loading) return <div className="p-10 text-center">Loading...</div>;
 
@@ -149,9 +162,14 @@ const InstructorAssignments = () => {
                           <p className="text-xs text-gray-500">{new Date(sub.createdAt).toLocaleString()}</p>
                         </div>
                         {sub.grade ? (
-                          <span className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 font-bold rounded-full text-sm flex items-center">
-                            <CheckCircle className="w-4 h-4 mr-1" /> Graded: {sub.grade}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-3 py-1 font-bold rounded-full text-sm flex items-center ${getGradeInfo(sub.grade).color}`}>
+                              <CheckCircle className="w-4 h-4 mr-1" /> Grade: {sub.grade}
+                            </span>
+                            <span className={`px-2 py-1 font-bold rounded-full text-xs ${sub.passed ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+                              {sub.passed ? '✓ PASS' : '✗ FAIL'}
+                            </span>
+                          </div>
                         ) : (
                           <span className="px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 font-bold rounded-full text-sm flex items-center">
                             <XCircle className="w-4 h-4 mr-1" /> Needs Grading
@@ -165,18 +183,32 @@ const InstructorAssignments = () => {
 
                       {!sub.grade ? (
                         <div className="bg-indigo-50 dark:bg-indigo-900/10 p-4 rounded-lg border border-indigo-100 dark:border-indigo-800">
+                          <p className="text-xs font-bold text-indigo-700 dark:text-indigo-300 mb-3 uppercase tracking-wider">Grade this submission (C or above = Pass)</p>
                           <div className="flex gap-3 mb-3">
-                            <input 
-                              type="text" placeholder="Grade (e.g. A, 9/10, 85%)" 
+                            <select
+                              value={gradeData.grade}
                               onChange={e => setGradeData({...gradeData, grade: e.target.value})}
-                              className="w-1/3 p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600 outline-none"
-                            />
+                              className="w-1/3 p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600 outline-none font-bold"
+                            >
+                              <option value="">Select Grade</option>
+                              <option value="A">A — Excellent (Pass)</option>
+                              <option value="B">B — Good (Pass)</option>
+                              <option value="C">C — Average (Pass)</option>
+                              <option value="D">D — Below Average (Fail)</option>
+                              <option value="F">F — Fail</option>
+                            </select>
                             <input 
-                              type="text" placeholder="Feedback (Optional)" 
+                              type="text" placeholder="Feedback for student (Optional)" 
+                              value={gradeData.feedback}
                               onChange={e => setGradeData({...gradeData, feedback: e.target.value})}
                               className="flex-1 p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600 outline-none"
                             />
                           </div>
+                          {gradeData.grade && (
+                            <p className={`text-xs font-bold mb-2 ${['A','B','C'].includes(gradeData.grade) ? 'text-green-600' : 'text-red-600'}`}>
+                              {['A','B','C'].includes(gradeData.grade) ? '✓ This grade will PASS the student' : '✗ This grade will FAIL the student'}
+                            </p>
+                          )}
                           <button onClick={() => handleGrade(sub._id)} className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-bold hover:bg-indigo-700">
                             Submit Grade
                           </button>
