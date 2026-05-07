@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Progress = require('../models/Progress');
 const Lesson = require('../models/Lesson');
-const { protect, instructorOnly } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 const Course = require('../models/Course');
 const User = require('../models/User');
 
@@ -75,7 +75,7 @@ router.post('/complete', protect, async (req, res) => {
 });
 
 // Get attendance/roster for a course (instructor only)
-router.get('/course/:courseId/attendance', protect, instructorOnly, async (req, res) => {
+router.get('/course/:courseId/attendance', protect, adminOnly, async (req, res) => {
   try {
     const course = await Course.findById(req.params.courseId).populate('students', 'name email');
     if (!course) return res.status(404).json({ msg: 'Course not found' });

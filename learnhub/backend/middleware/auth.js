@@ -20,12 +20,13 @@ const protect = async (req, res, next) => {
   }
 };
 
-const instructorOnly = (req, res, next) => {
-  if (req.user && req.user.role === 'instructor') {
+// 👇 Sirf Yeh Add Kiya Hai
+const adminOnly = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
     next();
   } else {
-    res.status(403).json({ msg: 'Not authorized as an instructor' });
+    res.status(403).json({ msg: '❌ Not authorized, Admins Only' });
   }
 };
 
-module.exports = { protect, instructorOnly };
+module.exports = { protect, adminOnly };

@@ -39,7 +39,7 @@ const EditCourse = () => {
         }
       } catch (error) {
         toast.error('Failed to load course details');
-        navigate('/instructor');
+        navigate('/admin');
       } finally {
         setLoading(false);
       }
@@ -79,7 +79,7 @@ const EditCourse = () => {
     try {
       await api.put(`/courses/${id}`, formData);
       toast.success('Course updated successfully!');
-      navigate('/instructor');
+      navigate('/admin');
     } catch (error) {
       toast.error('Failed to update course');
     }

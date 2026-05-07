@@ -3,7 +3,7 @@ const router = express.Router();
 const Course = require('../models/Course');
 const Progress = require('../models/Progress');
 const Lesson = require('../models/Lesson');
-const { protect, instructorOnly } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 
 router.get('/student', protect, async (req, res) => {
   try {
@@ -40,9 +40,9 @@ router.get('/student', protect, async (req, res) => {
   }
 });
 
-router.get('/instructor', protect, instructorOnly, async (req, res) => {
+router.get('/admin', protect, adminOnly, async (req, res) => {
   try {
-    const courses = await Course.find({ instructor: req.user._id });
+    const courses = await Course.find({ admin: req.user._id });
     const totalStudents = courses.reduce((acc, course) => acc + course.students.length, 0);
     const topCourse = courses.reduce((prev, current) => (prev.avgRating > current.avgRating) ? prev : current, courses[0] || null);
 

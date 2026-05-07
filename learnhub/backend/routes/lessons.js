@@ -3,7 +3,7 @@ const router = express.Router();
 const Lesson = require('../models/Lesson');
 const Course = require('../models/Course');
 const Notification = require('../models/Notification');
-const { protect, instructorOnly } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 
 // Get lessons for a course (enrolled students only ideally, but simple for now)
 router.get('/:courseId', protect, async (req, res) => {
@@ -16,7 +16,7 @@ router.get('/:courseId', protect, async (req, res) => {
 });
 
 // Add a lesson (instructor only)
-router.post('/', protect, instructorOnly, async (req, res) => {
+router.post('/', protect, adminOnly, async (req, res) => {
   try {
     const { title, youtubeLink, course } = req.body;
     const lesson = await Lesson.create({ title, youtubeLink, course });

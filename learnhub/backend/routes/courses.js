@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Course = require('../models/Course');
 const Notification = require('../models/Notification');
-const { protect, instructorOnly } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 
-// Get all courses (with search and filter)
+// ✅ Get all courses — Sab dekh sakte hain
 router.get('/', async (req, res) => {
   try {
     const { search, category, rating } = req.query;
@@ -13,27 +13,31 @@ router.get('/', async (req, res) => {
     if (category) query.category = category;
     if (rating) query.avgRating = { $gte: Number(rating) };
 
-    const courses = await Course.find(query).populate('instructor', 'name');
+    const courses = await Course.find(query).populate('admin', 'name');
     res.json(courses);
   } catch (error) {
     res.status(500).json({ msg: 'Server error' });
   }
 });
 
-// Create course (instructor only)
-router.post('/', protect, instructorOnly, async (req, res) => {
+// 🔒 Create course — Sirf Admin
+router.post('/', protect, adminOnly, async (req, res) => {
   try {
-    const course = await Course.create({ ...req.body, instructor: req.user._id });
+    const course = await Course.create({ 
+      ...req.body, 
+      admin: req.user._id
+    });
     res.status(201).json(course);
   } catch (error) {
     res.status(500).json({ msg: 'Server error' });
   }
 });
 
-// Get single course
+// ✅ Get single course — Sab dekh sakte hain
 router.get('/:id', async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id).populate('instructor', 'name');
+    const course = await Course.findById(req.params.id)
+      .populate('admin', 'name');
     if (!course) return res.status(404).json({ msg: 'Course not found' });
     res.json(course);
   } catch (error) {
@@ -41,7 +45,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Enroll in a course
+// ✅ Enroll in course — Logged in user
 router.post('/:id/enroll', protect, async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
@@ -65,26 +69,32 @@ router.post('/:id/enroll', protect, async (req, res) => {
   }
 });
 
-// Update course (instructor only)
-router.put('/:id', protect, instructorOnly, async (req, res) => {
+// 🔒 Update course — Sirf Admin
+router.put('/:id', protect, adminOnly, async (req, res) => {
   try {
     let course = await Course.findById(req.params.id);
-    
-    if (!course) {
-      return res.status(404).json({ msg: 'Course not found' });
-    }
+    if (!course) return res.status(404).json({ msg: 'Course not found' });
 
-    // Make sure user owns course
-    if (course.instructor.toString() !== req.user._id.toString()) {
-      return res.status(401).json({ msg: 'Not authorized to update this course' });
-    }
-
-    course = await Course.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
+    course = await Course.findByIdAndUpdate(
+      req.params.id, 
+      req.body, 
+      { new: true, runValidators: true }
+    );
 
     res.json(course);
+  } catch (error) {
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// 🔒 Delete course — Sirf Admin
+router.delete('/:id', protect, adminOnly, async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.id);
+    if (!course) return res.status(404).json({ msg: 'Course not found' });
+
+    await course.deleteOne();
+    res.json({ msg: '✅ Course deleted successfully' });
   } catch (error) {
     res.status(500).json({ msg: 'Server error' });
   }

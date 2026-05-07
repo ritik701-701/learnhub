@@ -317,7 +317,7 @@ const LessonView = () => {
                           {c.reply && (
                             <div className="mt-4 ml-10 p-4 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl border-l-4 border-indigo-400">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="text-xs font-bold text-indigo-800 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/50 px-2 py-0.5 rounded uppercase">Instructor Reply</span>
+                                <span className="text-xs font-bold text-indigo-800 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/50 px-2 py-0.5 rounded uppercase">Admin Reply</span>
                               </div>
                               <p className="text-sm text-gray-800 dark:text-gray-200 mt-1">{c.reply}</p>
                             </div>
