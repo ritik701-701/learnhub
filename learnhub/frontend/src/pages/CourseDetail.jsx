@@ -95,7 +95,8 @@ const CourseDetail = () => {
   if (!course) return <div className="text-center p-10">Course not found</div>;
 
   const isEnrolled = user && course.students.includes(user._id);
-  const isAdmin = user && course.admin && course.admin._id === user._id;
+  // Admin is platform-wide — any user with role 'admin' can manage all courses
+  const isAdmin = user && user.role === 'admin';
 
   return (
     <div className="max-w-6xl mx-auto">
