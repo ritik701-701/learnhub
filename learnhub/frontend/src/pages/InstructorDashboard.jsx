@@ -7,16 +7,21 @@ import { Book, Users, Star, PlusCircle } from 'lucide-react';
 const InstructorDashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const { data } = await api.get('/dashboard/admin');
         setStats(data);
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error('Dashboard fetch error:', err);
+        const status = err.response?.status;
+        const msg = err.response?.data?.msg || err.message || 'Unknown error';
+        setError(`Error ${status}: ${msg}`);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchStats();
   }, []);
@@ -26,7 +31,12 @@ const InstructorDashboard = () => {
   if (!stats) return (
     <div className="p-10 text-center">
       <h2 className="text-xl font-bold text-red-500">Failed to load dashboard data</h2>
-      <p className="text-gray-500">Please try refreshing the page.</p>
+      {error && (
+        <p className="mt-2 text-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-2 text-red-600 dark:text-red-400 font-mono">
+          {error}
+        </p>
+      )}
+      <p className="text-gray-500 mt-2">Please try refreshing the page.</p>
     </div>
   );
 
