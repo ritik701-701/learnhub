@@ -42,9 +42,13 @@ router.get('/student', protect, async (req, res) => {
 
 router.get('/admin', protect, adminOnly, async (req, res) => {
   try {
-    const courses = await Course.find({ admin: req.user._id });
+    // Admin sees ALL platform courses, not just ones they created
+    const courses = await Course.find({});
     const totalStudents = courses.reduce((acc, course) => acc + course.students.length, 0);
-    const topCourse = courses.reduce((prev, current) => (prev.avgRating > current.avgRating) ? prev : current, courses[0] || null);
+    
+    const topCourse = courses.length > 0
+      ? courses.reduce((prev, current) => (prev.avgRating > current.avgRating) ? prev : current)
+      : null;
 
     res.json({
       totalCourses: courses.length,
@@ -53,7 +57,8 @@ router.get('/admin', protect, adminOnly, async (req, res) => {
       coursesStats: courses.map(c => ({ _id: c._id, title: c.title, students: c.students.length }))
     });
   } catch (error) {
-    res.status(500).json({ msg: 'Server error' });
+    console.error("Dashboard Admin Route Error:", error);
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 });
 
