@@ -4,7 +4,6 @@ import { Star, Play } from 'lucide-react';
 const CourseCard = ({ course }) => {
   return (
     <div className="glass-card rounded-2xl overflow-hidden group relative flex flex-col h-full">
-      {/* Thumbnail with overlay */}
       <div className="relative h-48 overflow-hidden">
         <img 
           src={course.thumbnail || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'} 
@@ -13,7 +12,6 @@ const CourseCard = ({ course }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
         
-        {/* Play button appears on hover */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform scale-75 group-hover:scale-100">
           <div className="w-14 h-14 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 shadow-[0_0_15px_rgba(255,255,255,0.5)]">
             <Play className="w-6 h-6 text-white ml-1 fill-current" />

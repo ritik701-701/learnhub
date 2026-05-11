@@ -22,19 +22,16 @@ const CourseDetail = () => {
         const { data: courseData } = await api.get(`/courses/${id}`);
         setCourse(courseData);
         
-        // Try fetching lessons and user rating if user is logged in
         if (user) {
           try {
             const { data: lessonsData } = await api.get(`/lessons/${id}`);
             setLessons(lessonsData);
             
-            // Only fetch rating if user is enrolled
             if (courseData.students.includes(user._id)) {
               const { data: ratingData } = await api.get(`/ratings/${id}/me`);
               setUserRating(ratingData.stars);
             }
           } catch (e) {
-            // Probably not enrolled or not authorized
           }
         }
       } catch (error) {
@@ -55,7 +52,6 @@ const CourseDetail = () => {
     try {
       await api.post(`/courses/${id}/enroll`);
       toast.success('Successfully enrolled!');
-      // Refresh course data
       const { data } = await api.get(`/courses/${id}`);
       setCourse(data);
     } catch (error) {
@@ -69,7 +65,6 @@ const CourseDetail = () => {
       await api.post('/lessons', { ...newLesson, course: id });
       toast.success('Lesson added successfully!');
       setNewLesson({ title: '', youtubeLink: '' });
-      // Refresh lessons
       const { data } = await api.get(`/lessons/${id}`);
       setLessons(data);
     } catch (error) {
@@ -83,7 +78,6 @@ const CourseDetail = () => {
       setUserRating(stars);
       toast.success('Thanks for your rating!');
       
-      // Refresh course to get new avgRating
       const { data } = await api.get(`/courses/${id}`);
       setCourse(data);
     } catch (error) {
@@ -95,7 +89,6 @@ const CourseDetail = () => {
   if (!course) return <div className="text-center p-10">Course not found</div>;
 
   const isEnrolled = user && course.students.includes(user._id);
-  // Admin is platform-wide — any user with role 'admin' can manage all courses
   const isAdmin = user && user.role === 'admin';
 
   return (
@@ -239,9 +232,7 @@ const CourseDetail = () => {
           )}
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-6">
-          {/* Rate Course Section (For Enrolled Students Only) */}
           {isEnrolled && !isAdmin && (
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
               <h3 className="font-bold text-lg mb-2">Rate this Course</h3>

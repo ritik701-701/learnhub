@@ -23,8 +23,6 @@ router.post('/signup', [
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ msg: 'User already exists' });
 
-    // Explicitly prevent role assignment during signup
-    // Admin roles must be assigned directly in the database
     const user = await User.create({ name, email, password });
     res.status(201).json({
       _id: user._id,
@@ -94,7 +92,7 @@ router.put('/profile', protect, async (req, res) => {
       role: updatedUser.role,
       avatar: updatedUser.avatar,
       bio: updatedUser.bio,
-      token: generateToken(updatedUser._id) // optionally refresh token
+      token: generateToken(updatedUser._id)
     });
   } catch (error) {
     res.status(500).json({ msg: 'Server error' });

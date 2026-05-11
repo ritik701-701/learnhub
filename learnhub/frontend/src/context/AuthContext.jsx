@@ -20,13 +20,11 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem('user', JSON.stringify(data));
         } catch (error) {
           console.error('Failed to fetch user profile, falling back to local storage', error);
-          // If token is invalid or endpoint doesn't exist, use localStorage
           if (userInfo) {
             setUser(JSON.parse(userInfo));
           }
         }
       } else if (userInfo) {
-        // Edge case: user info exists but no token (shouldn't happen, but just in case)
         setUser(JSON.parse(userInfo));
       }
       setLoading(false);

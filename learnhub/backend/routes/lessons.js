@@ -5,7 +5,6 @@ const Course = require('../models/Course');
 const Notification = require('../models/Notification');
 const { protect, adminOnly } = require('../middleware/auth');
 
-// Get lessons for a course (enrolled students only ideally, but simple for now)
 router.get('/:courseId', protect, async (req, res) => {
   try {
     const lessons = await Lesson.find({ course: req.params.courseId });
@@ -15,7 +14,6 @@ router.get('/:courseId', protect, async (req, res) => {
   }
 });
 
-// Add a lesson (instructor only)
 router.post('/', protect, adminOnly, async (req, res) => {
   try {
     const { title, youtubeLink, course } = req.body;
@@ -23,7 +21,6 @@ router.post('/', protect, adminOnly, async (req, res) => {
 
     const courseObj = await Course.findById(course);
     if (courseObj) {
-      // Notify enrolled students
       const notifications = courseObj.students.map(studentId => ({
         user: studentId,
         message: `New lesson added to ${courseObj.title}: ${title}`

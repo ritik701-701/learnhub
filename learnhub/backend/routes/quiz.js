@@ -4,7 +4,6 @@ const Quiz = require('../models/Quiz');
 const QuizAttempt = require('../models/QuizAttempt');
 const { protect, adminOnly } = require('../middleware/auth');
 
-// Create quiz (instructor only)
 router.post('/create', protect, adminOnly, async (req, res) => {
   try {
     const { course, questions, passingPercent } = req.body;
@@ -22,7 +21,6 @@ router.post('/create', protect, adminOnly, async (req, res) => {
   }
 });
 
-// Get quiz for a course
 router.get('/:courseId', protect, async (req, res) => {
   try {
     const quiz = await Quiz.findOne({ course: req.params.courseId });
@@ -33,10 +31,9 @@ router.get('/:courseId', protect, async (req, res) => {
   }
 });
 
-// Submit quiz attempt
 router.post('/attempt', protect, async (req, res) => {
   try {
-    const { quizId, courseId, answers } = req.body; // answers: { [questionId]: 'selectedOption' }
+    const { quizId, courseId, answers } = req.body;
     
     const existingAttempt = await QuizAttempt.findOne({ user: req.user._id, course: courseId });
     if (existingAttempt) {
@@ -65,7 +62,6 @@ router.post('/attempt', protect, async (req, res) => {
       passed
     });
 
-    // Gamification Logic: Award points for passing the quiz
     if (passed) {
       const User = require('../models/User');
       const Notification = require('../models/Notification');
@@ -74,7 +70,6 @@ router.post('/attempt', protect, async (req, res) => {
         const currentPoints = (student.points || 0) + 100;
         const newBadges = [];
         
-        // Award "Quiz Master" badge if they get full marks
         if (percent === 100 && !(student.badges || []).includes('Quiz Master')) {
           newBadges.push('Quiz Master');
         }
@@ -98,7 +93,6 @@ router.post('/attempt', protect, async (req, res) => {
   }
 });
 
-// Get my result
 router.get('/result/:courseId', protect, async (req, res) => {
   try {
     const attempt = await QuizAttempt.findOne({ user: req.user._id, course: req.params.courseId });
