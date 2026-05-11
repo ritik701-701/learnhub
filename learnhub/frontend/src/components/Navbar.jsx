@@ -26,7 +26,6 @@ const Navbar = () => {
           <span>E-LearnHub</span>
         </Link>
         
-        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-2 md:space-x-4">
           <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
             {theme === 'dark' ? <Sun className="w-5 h-5 text-yellow-400 drop-shadow-md" /> : <Moon className="w-5 h-5 text-indigo-900 drop-shadow-md" />}
@@ -56,7 +55,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile menu button and theme toggle */}
         <div className="flex items-center space-x-2 md:hidden">
           <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
             {theme === 'dark' ? <Sun className="w-5 h-5 text-yellow-400 drop-shadow-md" /> : <Moon className="w-5 h-5 text-indigo-900 drop-shadow-md" />}
@@ -69,7 +67,6 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Navigation Dropdown */}
         {isMobileMenuOpen && (
           <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 flex flex-col space-y-3 md:hidden">
             {user ? (

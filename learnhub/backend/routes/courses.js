@@ -4,7 +4,6 @@ const Course = require('../models/Course');
 const Notification = require('../models/Notification');
 const { protect, adminOnly } = require('../middleware/auth');
 
-// ✅ Get all courses — Sab dekh sakte hain
 router.get('/', async (req, res) => {
   try {
     const { search, category, rating } = req.query;
@@ -20,7 +19,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 🔒 Create course — Sirf Admin
 router.post('/', protect, adminOnly, async (req, res) => {
   try {
     const course = await Course.create({ 
@@ -33,7 +31,6 @@ router.post('/', protect, adminOnly, async (req, res) => {
   }
 });
 
-// ✅ Get single course — Sab dekh sakte hain
 router.get('/:id', async (req, res) => {
   try {
     const course = await Course.findById(req.params.id)
@@ -45,7 +42,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// ✅ Enroll in course — Logged in user
 router.post('/:id/enroll', protect, async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
@@ -69,7 +65,6 @@ router.post('/:id/enroll', protect, async (req, res) => {
   }
 });
 
-// 🔒 Update course — Sirf Admin
 router.put('/:id', protect, adminOnly, async (req, res) => {
   try {
     let course = await Course.findById(req.params.id);
@@ -87,14 +82,13 @@ router.put('/:id', protect, adminOnly, async (req, res) => {
   }
 });
 
-// 🔒 Delete course — Sirf Admin
 router.delete('/:id', protect, adminOnly, async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).json({ msg: 'Course not found' });
 
     await course.deleteOne();
-    res.json({ msg: '✅ Course deleted successfully' });
+    res.json({ msg: 'Course deleted successfully' });
   } catch (error) {
     res.status(500).json({ msg: 'Server error' });
   }

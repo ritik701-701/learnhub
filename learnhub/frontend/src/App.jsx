@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
 
-// Pages
+
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import CourseList from './pages/CourseList';
@@ -30,7 +30,6 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/course/:id" element={<CourseDetail />} />
-            
             <Route path="/student" element={
               <PrivateRoute role="student"><StudentDashboard /></PrivateRoute>
             } />

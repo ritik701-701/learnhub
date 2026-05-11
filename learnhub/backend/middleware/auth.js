@@ -20,12 +20,11 @@ const protect = async (req, res, next) => {
   }
 };
 
-// 👇 Sirf Yeh Add Kiya Hai
 const adminOnly = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
     next();
   } else {
-    res.status(403).json({ msg: '❌ Not authorized, Admins Only' });
+    res.status(403).json({ msg: 'Not authorized, Admins Only' });
   }
 };
 

@@ -4,7 +4,6 @@ const Assignment = require('../models/Assignment');
 const AssignmentSubmission = require('../models/AssignmentSubmission');
 const { protect, adminOnly } = require('../middleware/auth');
 
-// Create assignment
 router.post('/', protect, adminOnly, async (req, res) => {
   try {
     const assignment = await Assignment.create(req.body);
@@ -14,7 +13,6 @@ router.post('/', protect, adminOnly, async (req, res) => {
   }
 });
 
-// Get assignments for a course
 router.get('/course/:courseId', protect, async (req, res) => {
   try {
     const assignments = await Assignment.find({ course: req.params.courseId });
@@ -24,7 +22,6 @@ router.get('/course/:courseId', protect, async (req, res) => {
   }
 });
 
-// Submit assignment
 router.post('/submit', protect, async (req, res) => {
   try {
     const { assignmentId, courseId, answerText } = req.body;
@@ -47,7 +44,6 @@ router.post('/submit', protect, async (req, res) => {
   }
 });
 
-// Get submissions for an assignment (admin only)
 router.get('/:assignmentId/submissions', protect, adminOnly, async (req, res) => {
   try {
     const submissions = await AssignmentSubmission.find({ assignment: req.params.assignmentId }).populate('user', 'name');
@@ -57,16 +53,11 @@ router.get('/:assignmentId/submissions', protect, adminOnly, async (req, res) =>
   }
 });
 
-// Grade submission (admin only)
-// Passing grades: A, B, C → passed = true
-// Failing grades: D, F → passed = false
 const PASSING_GRADES = ['A', 'B', 'C'];
 
 router.post('/grade/:submissionId', protect, adminOnly, async (req, res) => {
   try {
     const { grade, feedback } = req.body;
-    
-    // Validate grade
     const validGrades = ['A', 'B', 'C', 'D', 'F'];
     const upperGrade = (grade || '').toUpperCase().trim();
     if (!validGrades.includes(upperGrade)) {
@@ -83,7 +74,6 @@ router.post('/grade/:submissionId', protect, adminOnly, async (req, res) => {
 
     if (!submission) return res.status(404).json({ msg: 'Submission not found' });
 
-    // Gamification: Award points only if passed and not already awarded
     if (passed && !submission.pointsAwarded) {
       const User = require('../models/User');
       const Notification = require('../models/Notification');
@@ -92,7 +82,6 @@ router.post('/grade/:submissionId', protect, adminOnly, async (req, res) => {
         const newBadges = [];
         const currentPoints = (student.points || 0) + 50;
 
-        // Check for Assignment Pro badge
         if (currentPoints >= 100 && !(student.badges || []).includes('Assignment Pro')) {
           newBadges.push('Assignment Pro');
         }
@@ -108,7 +97,6 @@ router.post('/grade/:submissionId', protect, adminOnly, async (req, res) => {
         }
         await Notification.create({ user: submission.user, message: msg });
 
-        // Mark so points aren't awarded again
         await AssignmentSubmission.findByIdAndUpdate(req.params.submissionId, { pointsAwarded: true });
       }
     }
@@ -120,7 +108,6 @@ router.post('/grade/:submissionId', protect, adminOnly, async (req, res) => {
   }
 });
 
-// Get my submissions for a course
 router.get('/my-submissions/:courseId', protect, async (req, res) => {
   try {
     const submissions = await AssignmentSubmission.find({ user: req.user._id, course: req.params.courseId });
