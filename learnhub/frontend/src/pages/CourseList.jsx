@@ -67,7 +67,6 @@ const CourseList = () => {
         </div>
       ) : courses.length === 0 ? (
         <div className="text-center py-20">
-          <span className="text-6xl mb-4 block">🔍</span>
           <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300">No courses found</h2>
           <p className="text-gray-500">Try adjusting your filters</p>
         </div>
