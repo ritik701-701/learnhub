@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://learnhub-8tg6.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_URL || (
+    window.location.hostname.includes('vercel.app') ? '/api' : 'https://learnhub-8tg6.onrender.com/api'
+  ),
 });
 
 api.interceptors.request.use(
